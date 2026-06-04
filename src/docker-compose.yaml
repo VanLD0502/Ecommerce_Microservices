@@ -1,0 +1,11 @@
+#Mặc định gọi docker compose up -d sẽ gộp mặc định override vào 
+services:
+  product_db:
+    container_name: ecommerce_product_db
+    image: mysql:8.4
+  
+  cart_db:
+    container_name: ecommerce_cart_db
+    image: redis:7.4
+    
+  
