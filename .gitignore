@@ -1,0 +1,53 @@
+## Base dotnet core gitignore
+
+# Các thư mục chứa sản phẩm sau khi Build
+[Bb]in/
+[Oo]bj/
+[Ex]bin/
+[Ms]build/
+
+# Thư mục lưu trữ các gói thư viện (Nuget) cài thêm
+*.nuget.props
+*.nuget.targets
+packages/
+node_modules/
+
+# Các file cấu hình và cache của IDE (Visual Studio, VS Code, JetBrains Rider)
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.userprefs
+
+# Lịch sử và cache của công cụ test (NUnit, Coverlet, SpecFlow...)
+TestResults/
+*.sequenced
+*-[Cc]or[Pp]rof_*
+_ReSharper*/
+[Tt]est[Rr]esult*/
+
+# File cấu hình môi trường chứa THÔNG TIN BẢO MẬT (Rất quan trọng)
+# Giữ lại appsettings.json gốc, nhưng bỏ qua các file chứa cấu hình local/dev/secret
+appsettings.Development.json
+appsettings.Local.json
+*.env
+*.env.*
+secrets.json
+
+# Hệ điều hành sinh ra (Windows, Mac)
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Các file Log phát sinh khi chạy ứng dụng dưới local
+*.log
+logs/
+Log/
+[Ll]og/
+
+# Docker & Chạy local tự sinh
+.dockerignore
