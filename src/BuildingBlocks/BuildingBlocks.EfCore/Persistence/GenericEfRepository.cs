@@ -1,6 +1,6 @@
-using System.Linq.Expressions;
-using BuildingBlocks.Shared.Entities.Interfaces;
-using BuildingBlocks.Shared.Abstractions.Persistence.EFCore;
+﻿using System.Linq.Expressions;
+using BuildingBlocks.Shared.Domains.Interfaces;
+using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuildingBlocks.EfCore.Persistence.Commons;

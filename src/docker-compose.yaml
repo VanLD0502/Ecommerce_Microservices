@@ -8,4 +8,12 @@ services:
     container_name: ecommerce_cart_db
     image: redis:7.4
     
+  order_db:
+    container_name: ecommerce_order_db
+    image: postgres:16-alpine
+
+  rabbitmq:
+    container_name: ecommerce_rabbitmq
+    image: rabbitmq:3-management
+
   

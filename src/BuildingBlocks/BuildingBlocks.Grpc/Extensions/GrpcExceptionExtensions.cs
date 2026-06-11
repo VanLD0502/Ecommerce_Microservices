@@ -1,4 +1,4 @@
-using BuildingBlocks.Shared.Commons;
+﻿using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
 using Grpc.Core;
 
@@ -38,13 +38,13 @@ public static class GrpcExceptionExtensions
     public static RpcException ToRpcException<T>(this Result<T> result)
     {
         var grpcStatusCode = result.ErrorCode.MapToGrpcStatusCode();
-        return new RpcException(new Status(grpcStatusCode, result.Message));
+        return new RpcException(new Status(grpcStatusCode, result.Message ?? ""));
     }
 
     public static RpcException ToRpcException(this Result result)
     {
         var grpcStatusCode = result.ErrorCode.MapToGrpcStatusCode();
-        return new RpcException(new Status(grpcStatusCode, result.Message));
+        return new RpcException(new Status(grpcStatusCode, result.Message ?? ""));
     }
     
     
@@ -52,13 +52,13 @@ public static class GrpcExceptionExtensions
     {
         var errorCode = ex.StatusCode.ToEErrorCode();
         // ex.Status.Detail chính là cái Message mà Server ném ra trong RpcException
-        return Result<T>.Failure(errorCode, ex.Status.Detail!);
+        return Result<T>.Failure(ex.Status.Detail, errorCode);
     }
     
     // 3. Tự động chuyển RpcException thành Result dạng Failure
     public static Result ToResultFailure(this RpcException ex)
     {
         var errorCode = ex.StatusCode.ToEErrorCode();
-        return Result.Failure(ex.Status.Detail!,  errorCode);
+        return Result.Failure(ex.Status.Detail,  errorCode);
     }
 }

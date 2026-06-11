@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Shared.Enums;
+﻿namespace BuildingBlocks.Shared.Enums;
 public enum EHttpStatusCode
 {
     Ok = 200,

@@ -26,10 +26,32 @@ services:
     #-> ghi nhớ các lệnh trước đó để thực hiện lại, vì khi stop sẽ mất hết dữ liệu do lưu trên Ram.
     command: redis-server --appendonly yes
 
+  order_db:
+    container_name: ecommerce_order_db
+    restart: always
+    environment:
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=OrderDb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_order_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    container_name: ecommerce_rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
 
 volumes:
   mysql_product_data:
     driver: local
-    
-  redis_cart_data:
+  postgres_order_data:
     driver: local
+  redis_cart_data:
+    driver: local

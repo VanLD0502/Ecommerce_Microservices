@@ -1,10 +1,13 @@
-using BuildingBlocks.Shared.Entities.Interfaces;
+﻿using BuildingBlocks.Shared.Domains;
+using BuildingBlocks.Shared.Domains.Interfaces;
+using BuildingBlocks.Shared.InfrastructureInterfaces.InMemoryBus;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BuildingBlocks.EfCore.Persistence.Commons;
 
-public abstract class EfDbContextBase(DbContextOptions options) : DbContext(options)
+public abstract class EfDbContextBase(DbContextOptions options, IInMemoryBus bus) : DbContext(options)
 {
     private IDbContextTransaction? _transaction;
 
@@ -12,8 +15,10 @@ public abstract class EfDbContextBase(DbContextOptions options) : DbContext(opti
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         UpdateTrackingEntities();
+        var result =  await base.SaveChangesAsync(cancellationToken);
         
-        return await base.SaveChangesAsync(cancellationToken);
+        await DispatchDomainEventsAsync();
+        return result;
     }
     
     private void UpdateTrackingEntities()
@@ -33,6 +38,29 @@ public abstract class EfDbContextBase(DbContextOptions options) : DbContext(opti
             {
                 entry.Entity.LastModifiedDate = DateTimeOffset.UtcNow;
             }
+        }
+    }
+
+    private async Task DispatchDomainEventsAsync()
+    {
+        var aggregateRoots = ChangeTracker
+            .Entries<IAggregateRoot>()
+            .Select(e => e.Entity)
+            .Where(e => e.DomainEvents.Any())
+            .ToList();
+
+        var domainEvents = aggregateRoots
+            .SelectMany(root => root.DomainEvents)
+            .ToList();
+
+        foreach (var domainEvent in domainEvents)
+        {
+            await bus.Publish(domainEvent);
+        }
+
+        foreach (var aggregateRoot in aggregateRoots)
+        {
+            aggregateRoot.ClearDomainEvents();
         }
     }
     

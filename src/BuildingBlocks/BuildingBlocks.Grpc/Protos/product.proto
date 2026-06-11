@@ -5,15 +5,50 @@ option csharp_namespace = "BuildingBlocks.Grpc.Services";
 package product;
 
 service ProductGrpc {
-  rpc GetProductById(GetProductRequest) returns (ProductResponse);
+  rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
+  rpc ValidateProducts(ValidateProductsRequest) returns (ValidateProductsResponse);
 }
 
-message  GetProductRequest {
+message  GetProductByIdRequest {
   string id = 1;
 }
 
-message  ProductResponse {
+message  GetProductByIdResponse {
   string id = 1;
   string name = 2;
-  double  price = 3;
+  string  price = 3;
 }
+
+//ValidateProducts
+message ValidateProductsRequest {
+  repeated ValidateProductItemDto items = 1; 
+}
+
+message ValidateProductItemDto {
+  string id = 1;
+  string price = 2;
+  int32 quantity = 3;
+}
+
+message ValidateProductsResponse {
+  bool isValid = 1;
+  repeated ProductValidatedItemDto items = 3;
+}
+
+message ProductValidatedItemDto {
+  string id = 1;
+  string price = 2;
+  int32  quantity = 3;
+  string name = 4;
+  ProductValidatedErrorStatus errorStatus = 5;
+}
+
+enum ProductValidatedErrorStatus {
+  None = 0;
+  NotFound = 1;
+  OutOfStock = 2;
+  PriceChanged = 3;
+}
+
+
+

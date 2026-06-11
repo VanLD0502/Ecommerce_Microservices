@@ -51,3 +51,5 @@ Log/
 
 # Docker & Chạy local tự sinh
 .dockerignore
+Docs/
+QueryDb/

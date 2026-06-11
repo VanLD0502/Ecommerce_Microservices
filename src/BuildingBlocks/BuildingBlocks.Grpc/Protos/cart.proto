@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "BuildingBlocks.Grpc.Services";
+
+package cart;
+
+service CartGrpc {
+  rpc GetCartByCustomerId(GetCartByIdRequest) returns (GetCartByIdResponse);
+}
+
+message GetCartByIdRequest {
+  int32 customer_id = 1;
+}
+
+message CartItemDto {
+  string product_id = 1;
+  string unit_price = 2;
+  int32 quantity = 3;
+  string product_name = 4;
+}
+
+message GetCartByIdResponse {
+  int32 customer_id = 1;
+  repeated CartItemDto items = 2;
+  string total_price = 3;
+}

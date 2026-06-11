@@ -1,8 +1,9 @@
-namespace BuildingBlocks.Shared.Enums;
+﻿namespace BuildingBlocks.Shared.Enums;
 
 public enum EErrorCode
 {
     Success,
+    SuccessCreated,
     InvalidArgument,
     Forbidden,
     Unauthorized,

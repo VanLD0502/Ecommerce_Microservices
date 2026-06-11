@@ -1,6 +1,7 @@
+﻿using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.Commons;
-using BuildingBlocks.Shared.Enums;
-namespace Contracts.Extensions;
+
+namespace BuildingBlocks.Shared.Extensions;
 
 public static class ErrorCodeExtensions
 {
@@ -9,7 +10,9 @@ public static class ErrorCodeExtensions
         var httpStatusCode = errorCode switch
         {
             //200
-            EErrorCode.Success => EHttpStatusCode.Ok,                           
+            EErrorCode.Success => EHttpStatusCode.Ok,         
+            
+            EErrorCode.SuccessCreated => EHttpStatusCode.Created,
             
             //400
             EErrorCode.InvalidArgument => EHttpStatusCode.BadRequest,           
@@ -37,6 +40,7 @@ public static class ErrorCodeExtensions
         return errorCode switch
         {
             EErrorCode.Success => "Thao tác thành công.",
+            EErrorCode.SuccessCreated => "Tạo thành công",
             EErrorCode.InvalidArgument => "Dữ liệu yêu cầu không hợp lệ.",
             EErrorCode.Unauthorized => "Vui lòng đăng nhập để thực hiện chức năng này.",
             EErrorCode.Forbidden => "Bạn không có quyền truy cập vào tài nguyên này.",

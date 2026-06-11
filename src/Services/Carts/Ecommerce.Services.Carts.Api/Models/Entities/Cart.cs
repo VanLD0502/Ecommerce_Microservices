@@ -1,4 +1,4 @@
-using BuildingBlocks.Shared.Entities.Interfaces;
+using BuildingBlocks.Shared.Domains.Interfaces;
 namespace Ecommerce.Services.Carts.Api.Models.Entities;
 
 public record Cart : IDateTracking

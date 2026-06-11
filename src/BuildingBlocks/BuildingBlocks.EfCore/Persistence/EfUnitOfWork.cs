@@ -1,12 +1,12 @@
 
 using System.Collections.Concurrent;
-using BuildingBlocks.Shared.Abstractions.Persistence.EFCore;
-using BuildingBlocks.Shared.Entities;
-using BuildingBlocks.Shared.Entities.Interfaces;
+using BuildingBlocks.Shared.Domains.Interfaces;
+using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
+using BuildingBlocks.Shared.Domains;
 
 namespace BuildingBlocks.EfCore.Persistence.Commons;
 
-public class EfUnitOfWork<TContext>(TContext context) : IEfUnitOfWork<TContext> where TContext: EfDbContextBase
+public class EfUnitOfWork<TContext>(TContext context) : IEfUnitOfWork where TContext: EfDbContextBase
 {
     private readonly ConcurrentDictionary<Type, object> _repositories = new();
     

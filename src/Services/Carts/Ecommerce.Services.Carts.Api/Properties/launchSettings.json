@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Cart-Instance-1": {
+    "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
@@ -11,26 +11,7 @@
         "INSTANCE_NAME" : "ABC"
       }
     },
-    "Cart-Instance-2": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "http://localhost:5005",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "INSTANCE_NAME" : "DEF"
-      }
-    },
-    "Cart-Instance-3": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "http://localhost:5006",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "INSTANCE_NAME" : "Fuck"
-      }
-    },
+    
     "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,

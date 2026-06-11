@@ -1,7 +1,10 @@
-using Ecommerce.Services.Carts.Api.Models.Interfaces;
 using Ecommerce.Services.Carts.Api.Models.Dtos;
-using Ecommerce.Services.Carts.Api.Models.Entities;
-using BuildingBlocks.Shared.Commons;
+using Ecommerce.Services.Carts.Api.Features.Carts.Queries.GetCart;
+using Ecommerce.Services.Carts.Api.Features.Carts.Commands.AddItemToCart;
+using Ecommerce.Services.Carts.Api.Features.Carts.Commands.RemoveItemFromCart;
+using Ecommerce.Services.Carts.Api.Features.Carts.Commands.UpdateQuantity;
+using Ecommerce.Services.Carts.Api.Features.Carts.Commands.RemoveCart;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Services.Carts.Api.Endpoints;
@@ -10,33 +13,32 @@ public static class CartEndpoints
 {
     public static IEndpointRouteBuilder AddCartEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        // Thống nhất dùng {customerId} thay cho {userId} để đồng bộ toàn bộ API Group
         var group = endpoints.MapGroup("api/carts")
                              .WithTags("CartEndpoints")
                              .WithSummary("Đây là bộ API quản lý giỏ hàng")
                              .WithOpenApi();
         
-        // GET /api/v1/carts/{customerId}
+        // GET /api/carts/{customerId}
         group.MapGet("/{customerId}", GetCart)
             .WithName("GetCart")
             .WithSummary("Lấy giỏ hàng của user");
         
-        // POST /api/v1/carts/{customerId}/items
+        // POST /api/carts/{customerId}/items
         group.MapPost("/{customerId}/items", AddItem)
             .WithName("AddItem")
             .WithSummary("Thêm sản phẩm vào giỏ");
  
-        // PUT /api/v1/carts/{customerId}/items/{productId}
+        // PUT /api/carts/{customerId}/items/{productId}
         group.MapPut("/{customerId}/items/{productId}", UpdateQuantity)
             .WithName("UpdateQuantity")
             .WithSummary("Cập nhật số lượng sản phẩm");
         
-        // DELETE /api/v1/carts/{customerId}/items/{productId}
+        // DELETE /api/carts/{customerId}/items/{productId}
         group.MapDelete("/{customerId}/items/{productId}", RemoveItem)
             .WithName("RemoveItem")
             .WithSummary("Xóa sản phẩm khỏi giỏ");
         
-        // DELETE /api/v1/carts/{customerId}
+        // DELETE /api/carts/{customerId}
         group.MapDelete("/{customerId}", ClearCart)
             .WithName("ClearCart")
             .WithSummary("Xóa toàn bộ giỏ hàng");
@@ -45,43 +47,45 @@ public static class CartEndpoints
     }
 
     // 1. LẤY GIỎ HÀNG
-    private static async Task<IResult> GetCart(int customerId, ICartService cartService)
+    private static async Task<IResult> GetCart(int customerId, ISender sender)
     {
-        var result = await cartService.GetCart(customerId);
+        var result = await sender.Send(new GetCartQuery(customerId));
         
         return result.IsSuccess 
             ? Results.Json(result.Value, statusCode: result.GetHttpStatusCode()) 
-            : Results.Content(result.Message, statusCode:result.GetHttpStatusCode());
+            : Results.Content(result.Message, statusCode: result.GetHttpStatusCode());
     }
 
     // 2. THÊM SẢN PHẨM VÀO GIỎ
-    private static async Task<IResult> AddItem(int customerId, [FromBody] CartItemRequest cartItem, ICartService cartService)
+    private static async Task<IResult> AddItem(int customerId, [FromBody] CartItemRequest cartItem, ISender sender)
     {
-        var result = await cartService.AddItemToCart(customerId, cartItem.ProductId, cartItem.Quantity);
-
+        var result = await sender.Send(new AddItemToCartCommand(customerId, cartItem.ProductId, cartItem.Quantity));
 
         return result.IsSuccess
             ? Results.Json(result.Value, statusCode: result.GetHttpStatusCode())
             : Results.Content(result.Message, statusCode: result.GetHttpStatusCode());
     }
     
-    private static async Task<IResult> UpdateQuantity(int customerId, [FromBody] CartItemRequest cartItem, ICartService cartService)
+    // 3. CẬP NHẬT SỐ LƯỢNG SẢN PHẨM
+    private static async Task<IResult> UpdateQuantity(int customerId, [FromBody] CartItemRequest cartItem, ISender sender)
     {
-        var result = await cartService.UpdateQuantityAsync(customerId, cartItem.ProductId, cartItem.Quantity);
+        var result = await sender.Send(new UpdateQuantityCommand(customerId, cartItem.ProductId, cartItem.Quantity));
         
         return Results.Content(result.Message, statusCode: result.GetHttpStatusCode);
     }
     
-    private static async Task<IResult> RemoveItem(int customerId, Guid productId, ICartService cartService)
+    // 4. XÓA SẢN PHẨM KHỎI GIỎ
+    private static async Task<IResult> RemoveItem(int customerId, Guid productId, ISender sender)
     {
-        var result = await cartService.RemoveItemFromCart(customerId, productId);
+        var result = await sender.Send(new RemoveItemFromCartCommand(customerId, productId));
         
         return Results.Content(result.Message, statusCode: result.GetHttpStatusCode);
     }
     
-    private static async Task<IResult> ClearCart(int customerId, ICartService cartService)
+    // 5. XÓA TOÀN BỘ GIỎ HÀNG
+    private static async Task<IResult> ClearCart(int customerId, ISender sender)
     {
-        var result = await cartService.RemoveCart(customerId);
+        var result = await sender.Send(new RemoveCartCommand(customerId));
         
         return Results.Content(result.Message, statusCode: result.GetHttpStatusCode);
     }

@@ -1,4 +1,4 @@
-using Contracts.Abstractions.Caching;
+﻿using BuildingBlocks.Shared.InfrastructureInterfaces.Caching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;

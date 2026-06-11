@@ -4,15 +4,15 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Contracts</RootNamespace>
+        <RootNamespace>BuildingBlocks.Shared</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Abstractions\Persistence\Mongo\" />
+      <Folder Include="InfrastructureInterfaces\Persistence\Mongo\" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.16" />
+      <PackageReference Include="MediatR" Version="14.1.0" />
     </ItemGroup>
 
 </Project>

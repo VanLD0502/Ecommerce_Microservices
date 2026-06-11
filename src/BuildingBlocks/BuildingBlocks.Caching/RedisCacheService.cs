@@ -1,4 +1,4 @@
-using Contracts.Abstractions.Caching;
+﻿using BuildingBlocks.Shared.InfrastructureInterfaces.Caching;
 
 namespace BuildingBlocks.Caching;
 

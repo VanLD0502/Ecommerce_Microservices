@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using BuildingBlocks.Shared.Enums;
-using Contracts.Extensions;
+using BuildingBlocks.Shared.Extensions;
 
 namespace BuildingBlocks.Shared.Commons;
 
@@ -62,10 +62,10 @@ public class Result<T>
     public int GetHttpStatusCode() => ErrorCode.ToHttpStatusCode();
     
     
-    public static Result<T> Success(T value, string? message = null) => 
-        new() { IsSuccess = true, Value = value, Message = message, ErrorCode = EErrorCode.Success };
+    public static Result<T> Success(T value, EErrorCode successCode = EErrorCode.Success) => 
+        new() { IsSuccess = true, Value = value, ErrorCode = successCode };
     
-    public static Result<T> Failure(EErrorCode eError, string? message) => 
+    public static Result<T> Failure(string? message, EErrorCode eError) => 
         new() { IsSuccess = false, Message = message ?? eError.ToDefaultMessage(), ErrorCode = eError };
     
     // public static Result<T> Failure(string message, int statusCode) => 
