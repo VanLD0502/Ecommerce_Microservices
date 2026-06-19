@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
 using BuildingBlocks.Shared.Domains.Interfaces;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +42,20 @@ public class GenericEfRepository<T, TKey, TDbContext> : IGenericEfRepository<T, 
         }
 
         return await query.FirstOrDefaultAsync(
+            entity => entity.Id!.Equals(id),
+            cancellationToken);
+    }
+
+    public Task<T?> GetByIdAsync(TKey id, string[] includeStrings, CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = _dbSet;
+
+        foreach (var includeString in includeStrings)
+        {
+            query = query.Include(includeString);
+        }
+
+        return query.FirstOrDefaultAsync(
             entity => entity.Id!.Equals(id),
             cancellationToken);
     }
@@ -181,5 +197,24 @@ public class GenericEfRepository<T, TKey, TDbContext> : IGenericEfRepository<T, 
         return _dbSet
             .Where(predicate)
             .SumAsync(selector, cancellationToken);
+    }
+
+    public async Task<T?> GetBySpecAsync(ISingleResultSpecification<T> spec, CancellationToken cancellationToken = default)
+    {
+        return await SpecificationEvaluator.Default.GetQuery(_dbSet.AsQueryable(), spec)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<T?> FirstOrDefaultAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+    {
+        return await SpecificationEvaluator.Default.GetQuery(_dbSet.AsQueryable(), spec)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+    
+
+    public async Task<List<T>> GetListAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+    {
+        return await SpecificationEvaluator.Default.GetQuery(_dbSet.AsQueryable(), spec)
+            .ToListAsync(cancellationToken);
     }
 }

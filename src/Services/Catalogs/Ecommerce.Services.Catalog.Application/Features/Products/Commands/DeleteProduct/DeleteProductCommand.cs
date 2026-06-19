@@ -3,7 +3,7 @@ using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.InfrastructureInterfaces.InMemoryBus;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
-using Ecommerce.Services.Catalog.Domain;
+using Ecommerce.Services.Catalog.Domain.Products;
 using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Services.Catalog.Application.Features.Products.Commands.DeleteProduct;

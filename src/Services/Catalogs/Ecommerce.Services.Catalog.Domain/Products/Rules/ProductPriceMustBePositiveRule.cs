@@ -1,6 +1,6 @@
 using BuildingBlocks.Shared.Domains.Interfaces;
 
-namespace Ecommerce.Services.Catalog.Domain.Rules;
+namespace Ecommerce.Services.Catalog.Domain.Products.Rules;
 
 public class ProductPriceMustBePositiveRule(decimal price) : IBusinessRule
 {

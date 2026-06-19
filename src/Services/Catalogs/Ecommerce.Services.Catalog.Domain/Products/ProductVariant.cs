@@ -1,0 +1,65 @@
+using BuildingBlocks.Shared.Domains;
+using BuildingBlocks.Shared.Domains.Interfaces;
+using Ecommerce.Services.Catalog.Domain.Products.Rules;
+
+namespace Ecommerce.Services.Catalog.Domain.Products;
+
+public class ProductVariant : EntityTrackingBase<Guid>
+{
+    public Guid ProductId { get; private set; }
+    public string? Sku { get; private set; }
+    public decimal Price { get; private set; }
+    public int AvailableStocks { get; private set; }
+    public int ReservedStocks { get; private set; }
+    public bool IsDeleted { get; private set; }
+
+    private readonly List<ProductVariantOption> _options = new();
+    public IReadOnlyCollection<ProductVariantOption> Options => _options.AsReadOnly();
+
+    private ProductVariant() { }
+
+    public ProductVariant(Guid productId, string? sku, decimal price, int availableStocks)
+    {
+        Check(new ProductPriceMustBePositiveRule(price));
+        Check(new ProductStocksCannotBeNegativeRule(availableStocks));
+
+        Id = Guid.NewGuid();
+        ProductId = productId;
+        Sku = sku;
+        Price = price;
+        AvailableStocks = availableStocks;
+        ReservedStocks = 0;
+        IsDeleted = false;
+    }
+
+    public void UpdatePrice(decimal newPrice)
+    {
+        Check(new ProductPriceMustBePositiveRule(newPrice));
+        Price = newPrice;
+    }
+
+    public void UpdateStock(int newStock)
+    {
+        Check(new ProductStocksCannotBeNegativeRule(newStock));
+        AvailableStocks = newStock;
+    }
+
+    public void AddOption(ProductVariantOption option)
+    {
+        _options.Add(option);
+    }
+    
+    public void SoftDelete()
+    {
+        Check(new ProductVariantCannotHaveReservedStockRule(ReservedStocks));
+        IsDeleted = true;
+    }
+
+    private void Check(IBusinessRule rule)
+    {
+        if (rule.IsBroken())
+        {
+            throw new DomainException(rule);
+        }
+    }
+}

@@ -1,3 +1,4 @@
+using System.Linq;
 using BuildingBlocks.Grpc.Extensions;
 using BuildingBlocks.Grpc.Services;
 using BuildingBlocks.Shared.Enums;
@@ -29,7 +30,7 @@ public class ProductGrpcService(ISender sender) : ProductGrpc.ProductGrpcBase
         {
             Id = product.Id.ToString(),
             Name = product.Name,
-            Price = product.Price.ToGrpcString()
+            Price = (product.Variants.FirstOrDefault()?.Price ?? 0).ToGrpcString()
         };
 
         return response;
@@ -73,17 +74,20 @@ public class ProductGrpcService(ISender sender) : ProductGrpc.ProductGrpcBase
                 Id = item.Id,
                 Name = product.Name,
                 Quantity = item.Quantity,
-                Price = product.Price.ToGrpcString(),
+                Price = (product.Variants.FirstOrDefault()?.Price ?? 0).ToGrpcString(),
                 ErrorStatus = ProductValidatedErrorStatus.None
             };
 
-            if (item.Quantity > product.Stocks)
+            var variantStock = product.Variants.FirstOrDefault()?.AvailableStocks ?? 0;
+            var variantPrice = product.Variants.FirstOrDefault()?.Price ?? 0;
+
+            if (item.Quantity > variantStock)
             {
-                ProductValidatedItemDto.Quantity = product.Stocks;
+                ProductValidatedItemDto.Quantity = variantStock;
                 ProductValidatedItemDto.ErrorStatus = ProductValidatedErrorStatus.OutOfStock;
             }
 
-            if (!decimal.TryParse(item.Price, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal clientPrice) || clientPrice != product.Price)
+            if (!decimal.TryParse(item.Price, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal clientPrice) || clientPrice != variantPrice)
             {
                 ProductValidatedItemDto.ErrorStatus = ProductValidatedErrorStatus.PriceChanged;
             }

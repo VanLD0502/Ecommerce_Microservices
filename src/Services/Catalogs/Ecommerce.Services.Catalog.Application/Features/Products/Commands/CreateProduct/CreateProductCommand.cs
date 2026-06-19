@@ -3,13 +3,16 @@ using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.InfrastructureInterfaces.InMemoryBus;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
 using Ecommerce.Services.Catalog.Application.Commons.Dtos.Products;
-using Ecommerce.Services.Catalog.Domain;
+using Ecommerce.Services.Catalog.Domain.Products;
 using MapsterMapper;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ecommerce.Services.Catalog.Application.Features.Products.Commands.CreateProduct;
 
-public record CreateProductCommand(string Name, string Description, decimal Price, int Stocks) : ICommand<ProductResponse>;
+public record CreateProductCommand(string Name, string Description) : ICommand<ProductResponse>;
 
 public class CreateProductCommandHandler(
     IEfUnitOfWork unitOfWork,
@@ -22,11 +25,9 @@ public class CreateProductCommandHandler(
     {
         try
         {
-            var product = new Product(
+            var product = Product.CreateNewProduct(
                 command.Name,
-                command.Description,
-                command.Price,
-                command.Stocks
+                command.Description
             );
 
             _productRepository.Add(product);
@@ -42,5 +43,4 @@ public class CreateProductCommandHandler(
             return Result<ProductResponse>.Failure("Có lỗi xảy ra khi thêm sản phẩm");
         }
     }
-    
 }

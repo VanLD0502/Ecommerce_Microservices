@@ -9,9 +9,11 @@
 
     <ItemGroup>
       <Folder Include="InfrastructureInterfaces\Persistence\Mongo\" />
+      <Folder Include="Specifications\" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Ardalis.Specification" Version="9.3.1" />
       <PackageReference Include="MediatR" Version="14.1.0" />
     </ItemGroup>
 

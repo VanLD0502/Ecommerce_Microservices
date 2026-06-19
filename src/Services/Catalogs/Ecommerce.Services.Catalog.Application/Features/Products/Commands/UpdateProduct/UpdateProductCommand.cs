@@ -4,13 +4,16 @@ using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.InfrastructureInterfaces.InMemoryBus;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
 using Ecommerce.Services.Catalog.Application.Commons.Dtos.Products;
-using Ecommerce.Services.Catalog.Domain;
+using Ecommerce.Services.Catalog.Domain.Products;
 using MapsterMapper;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ecommerce.Services.Catalog.Application.Features.Products.Commands.UpdateProduct;
 
-public record UpdateProductCommand(Guid Id, string Name, string Description, decimal Price, int Stocks) : ICommand<ProductResponse>;
+public record UpdateProductCommand(Guid Id, string Name, string Description) : ICommand<ProductResponse>;
 
 public class UpdateProductCommandHandler(
     IEfUnitOfWork unitOfWork,
@@ -31,8 +34,6 @@ public class UpdateProductCommandHandler(
             }
 
             existsProduct.UpdateDetails(command.Name, command.Description);
-            existsProduct.UpdatePrice(command.Price);
-            existsProduct.UpdateStocks(command.Stocks);
 
             _productRepository.Update(existsProduct);
             await unitOfWork.SaveChangesAsync(cancellationToken);
