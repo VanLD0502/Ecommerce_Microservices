@@ -36,5 +36,10 @@ public class ProductVariantDto
     public decimal Price { get; set; }
     public int AvailableStocks { get; set; }
     public int ReservedStocks { get; set; }
-    public List<Guid> OptionValueIds { get; set; } = new();
+    public List<ProductVariantOptionDto> Options { get; set; } = new();
+}
+
+public class ProductVariantOptionDto
+{
+    public Guid OptionValueId {get; set;}
 }

@@ -1,6 +1,6 @@
 using BuildingBlocks.Web.Controllers;
-using Ecommerce.Services.Orders.Application.Commons.Dtos.Orders;
 using Ecommerce.Services.Orders.Application.Features.Commands.CreateOrder;
+using Ecommerce.Services.Orders.Application.Features.Orders.Dtos;
 using Ecommerce.Services.Orders.Application.Features.Queries.GetCustomerOrders;
 using Microsoft.AspNetCore.Mvc;
 

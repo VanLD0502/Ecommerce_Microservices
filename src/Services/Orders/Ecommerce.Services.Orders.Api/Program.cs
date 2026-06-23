@@ -8,6 +8,8 @@ using MapsterMapper;
 using Scalar.AspNetCore;
 using BuildingBlocks.Grpc.Services;
 using Ecommerce.Services.Orders.Application;
+using Ecommerce.Services.Orders.Application.Services;
+using Ecommerce.Services.Orders.Infrastructure.GrpcClients;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +37,9 @@ builder.Services.AddGrpcClient<CartGrpc.CartGrpcClient>(o =>
 {
     o.Address = new Uri(builder.Configuration["Services:CartGrpcUrl"] ?? throw new InvalidOperationException("CartGrpcUrl is missing."));
 });
+
+
+builder.Services.AddScoped<ICartService, CartClientService>();
 
 var app = builder.Build();
 

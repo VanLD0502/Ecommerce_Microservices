@@ -3,7 +3,7 @@ using BuildingBlocks.EfCore;
 using BuildingBlocks.Web.Extensions;
 using Ecommerce.Services.Catalog.Infrastructure;
 using Ecommerce.Services.Catalog.Application.Features.Products.Queries.GetProducts;
-using Ecommerce.Services.Catalog.Api.GrpcServices;
+using Ecommerce.Services.Catalog.Api.GrpcServers;
 using Ecommerce.Services.Catalog.Application;
 using Scalar.AspNetCore;
 using Serilog;
@@ -35,5 +35,4 @@ app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 app.MapGrpcService<ProductGrpcService>();
 app.MapControllers();
-
 app.Run();

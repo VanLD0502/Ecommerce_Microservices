@@ -59,7 +59,7 @@ public static class CartEndpoints
     // 2. THÊM SẢN PHẨM VÀO GIỎ
     private static async Task<IResult> AddItem(int customerId, [FromBody] CartItemRequest cartItem, ISender sender)
     {
-        var result = await sender.Send(new AddItemToCartCommand(customerId, cartItem.ProductId, cartItem.Quantity));
+        var result = await sender.Send(new AddItemToCartCommand(customerId, cartItem.VariantId, cartItem.Quantity));
 
         return result.IsSuccess
             ? Results.Json(result.Value, statusCode: result.GetHttpStatusCode())
@@ -69,7 +69,7 @@ public static class CartEndpoints
     // 3. CẬP NHẬT SỐ LƯỢNG SẢN PHẨM
     private static async Task<IResult> UpdateQuantity(int customerId, [FromBody] CartItemRequest cartItem, ISender sender)
     {
-        var result = await sender.Send(new UpdateQuantityCommand(customerId, cartItem.ProductId, cartItem.Quantity));
+        var result = await sender.Send(new UpdateQuantityCommand(customerId, cartItem.VariantId, cartItem.Quantity));
         
         return Results.Content(result.Message, statusCode: result.GetHttpStatusCode);
     }

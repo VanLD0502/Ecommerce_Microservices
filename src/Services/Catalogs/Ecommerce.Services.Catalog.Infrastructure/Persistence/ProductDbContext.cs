@@ -34,7 +34,7 @@ public class ProductDbContext(DbContextOptions<ProductDbContext> options, IInMem
                   .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             entity.HasMany(p => p.Variants)
-                  .WithOne()
+                  .WithOne(v => v.Product)
                   .HasForeignKey(v => v.ProductId)
                   .OnDelete(DeleteBehavior.Cascade);
 
@@ -48,7 +48,7 @@ public class ProductDbContext(DbContextOptions<ProductDbContext> options, IInMem
             entity.Property(o => o.Name).HasMaxLength(255);
 
             entity.HasMany(o => o.Values)
-                  .WithOne()
+                  .WithOne(v => v.Option)
                   .HasForeignKey(v => v.OptionId)
                   .OnDelete(DeleteBehavior.Cascade);
 
@@ -68,8 +68,7 @@ public class ProductDbContext(DbContextOptions<ProductDbContext> options, IInMem
             entity.HasKey(v => v.Id);
             entity.Property(v => v.Price).HasColumnType("decimal(18,2)");
             entity.Property(v => v.Sku).HasMaxLength(50);
-
-            entity.HasQueryFilter(v => !v.IsDeleted);
+            
 
             entity.HasMany(v => v.Options)
                   .WithOne(vo => vo.Variant)

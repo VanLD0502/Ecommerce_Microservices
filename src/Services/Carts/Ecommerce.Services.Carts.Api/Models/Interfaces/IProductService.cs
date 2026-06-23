@@ -6,6 +6,6 @@ namespace Ecommerce.Services.Carts.Api.Models.Interfaces;
 
 public interface IProductService
 {
-    Task<Result<ProductDto>> GetProductAsync(Guid productId);
-    Task<Result<CartValidationDto>> ValidateProducts(Cart cart);
+    Task<Result<ProductDto>> GetProductVariantAsync(Guid variantId);
+    Task<Result<List<ProductDto>>> GetProductVariantListAsync(List<string> variantIds);
 }

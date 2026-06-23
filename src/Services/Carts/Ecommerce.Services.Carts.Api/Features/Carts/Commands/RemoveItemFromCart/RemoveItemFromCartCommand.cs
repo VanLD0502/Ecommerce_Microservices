@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Services.Carts.Api.Features.Carts.Commands.RemoveItemFromCart;
 
-public record RemoveItemFromCartCommand(int CustomerId, Guid ProductId) : ICommand;
+public record RemoveItemFromCartCommand(int CustomerId, Guid ProductVariantId) : ICommand;
 
 public class RemoveItemFromCartCommandHandler(
     ICacheService cacheService,
@@ -29,7 +29,7 @@ public class RemoveItemFromCartCommandHandler(
                 return Result.Failure("Không tìm thấy giỏ hàng", EErrorCode.NotFound);
             }
 
-            cart.Items.RemoveAll(x => x.ProductId == request.ProductId);
+            cart.Items.RemoveAll(x => x.ProductVariantId == request.ProductVariantId);
 
             await cacheService.SetAsync(key, cart, CartExpiry, cancellationToken);
 

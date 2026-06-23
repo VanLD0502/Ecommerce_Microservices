@@ -1,6 +1,7 @@
 using BuildingBlocks.EfCore.Persistence.Commons;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
 using Ecommerce.Services.Catalog.Infrastructure.Persistence;
+using Ecommerce.Services.Orders.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

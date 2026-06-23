@@ -22,7 +22,7 @@ namespace Ecommerce.Services.Catalog.Infrastructure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Product", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -46,7 +46,7 @@ namespace Ecommerce.Services.Catalog.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductOption", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductOption", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,7 +79,7 @@ namespace Ecommerce.Services.Catalog.Infrastructure.Migrations
                     b.ToTable("ProductOptions");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductOptionValue", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductOptionValue", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,7 +113,7 @@ namespace Ecommerce.Services.Catalog.Infrastructure.Migrations
                     b.ToTable("ProductOptionValues");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductVariant", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductVariant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,7 +151,7 @@ namespace Ecommerce.Services.Catalog.Infrastructure.Migrations
                     b.ToTable("ProductVariants");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductVariantOption", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductVariantOption", b =>
                 {
                     b.Property<Guid>("VariantId")
                         .HasColumnType("char(36)");
@@ -166,42 +166,46 @@ namespace Ecommerce.Services.Catalog.Infrastructure.Migrations
                     b.ToTable("ProductVariantOptions");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductOption", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductOption", b =>
                 {
-                    b.HasOne("Ecommerce.Services.Catalog.Domain.Product", null)
+                    b.HasOne("Ecommerce.Services.Catalog.Domain.Products.Product", null)
                         .WithMany("Options")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductOptionValue", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductOptionValue", b =>
                 {
-                    b.HasOne("Ecommerce.Services.Catalog.Domain.ProductOption", null)
+                    b.HasOne("Ecommerce.Services.Catalog.Domain.Products.ProductOption", "Option")
                         .WithMany("Values")
                         .HasForeignKey("OptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Option");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductVariant", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductVariant", b =>
                 {
-                    b.HasOne("Ecommerce.Services.Catalog.Domain.Product", null)
+                    b.HasOne("Ecommerce.Services.Catalog.Domain.Products.Product", "Product")
                         .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductVariantOption", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductVariantOption", b =>
                 {
-                    b.HasOne("Ecommerce.Services.Catalog.Domain.ProductOptionValue", "OptionValue")
+                    b.HasOne("Ecommerce.Services.Catalog.Domain.Products.ProductOptionValue", "OptionValue")
                         .WithMany()
                         .HasForeignKey("OptionValueId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Ecommerce.Services.Catalog.Domain.ProductVariant", "Variant")
+                    b.HasOne("Ecommerce.Services.Catalog.Domain.Products.ProductVariant", "Variant")
                         .WithMany("Options")
                         .HasForeignKey("VariantId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -212,19 +216,19 @@ namespace Ecommerce.Services.Catalog.Infrastructure.Migrations
                     b.Navigation("Variant");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Product", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.Product", b =>
                 {
                     b.Navigation("Options");
 
                     b.Navigation("Variants");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductOption", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductOption", b =>
                 {
                     b.Navigation("Values");
                 });
 
-            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.ProductVariant", b =>
+            modelBuilder.Entity("Ecommerce.Services.Catalog.Domain.Products.ProductVariant", b =>
                 {
                     b.Navigation("Options");
                 });

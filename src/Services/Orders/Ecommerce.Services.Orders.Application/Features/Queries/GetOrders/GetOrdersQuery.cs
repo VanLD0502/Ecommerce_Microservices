@@ -2,7 +2,7 @@ using BuildingBlocks.Application.InMemoryBus;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.InfrastructureInterfaces.InMemoryBus;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
-using Ecommerce.Services.Orders.Application.Commons.Dtos.Orders;
+using Ecommerce.Services.Orders.Application.Features.Orders.Dtos;
 using Ecommerce.Services.Orders.Domain;
 using Mapster;
 using MapsterMapper;

@@ -64,6 +64,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{3AEEC034-B061-4B35-848F-475FFAF246B2}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\mapster_guide.md = Docs\mapster_guide.md
+		Docs\c#.txt = Docs\c#.txt
+		Docs\DDD.txt = Docs\DDD.txt
+		Docs\fluent_api_guide.md = Docs\fluent_api_guide.md
+		Docs\Grpc.md = Docs\Grpc.md
+		Docs\systemdesign.txt = Docs\systemdesign.txt
+		Docs\Tóm tắt.txt = Docs\Tóm tắt.txt
+		Docs\redis_cli_guide.md = Docs\redis_cli_guide.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QueryDb", "QueryDb", "{9D57CF15-9990-498E-87D2-C313CD4FBCCB}"

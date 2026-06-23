@@ -5,9 +5,9 @@ using BuildingBlocks.Logging;
 using BuildingBlocks.Messaging;
 using BuildingBlocks.Web.Extensions;
 using Ecommerce.Services.Carts.Api.Endpoints;
-using Ecommerce.Services.Carts.Api.GrpcServices;
+using Ecommerce.Services.Carts.Api.GrpcServers;
 using Ecommerce.Services.Carts.Api.Models.Interfaces;
-using Ecommerce.Services.Carts.Api.Services;
+using Ecommerce.Services.Carts.Api.GrpcClients;
 using MassTransit;
 using Mapster;
 using MapsterMapper;
@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //MyDI
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, ProductClientService>();
 
 //BuildingBlocks
 builder.AddCustomSerilog("Cart Api");
@@ -33,6 +33,7 @@ builder.Services.AddGrpcClient<ProductGrpc.ProductGrpcClient>(o =>
 });
 builder.Services.AddGrpc();
 
+builder.Services.AddBuildingBlocksApplication(typeof(Program).Assembly);
 
 var app = builder.Build();
 

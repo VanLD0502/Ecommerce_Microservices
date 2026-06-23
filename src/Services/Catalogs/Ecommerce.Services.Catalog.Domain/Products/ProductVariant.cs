@@ -15,6 +15,7 @@ public class ProductVariant : EntityTrackingBase<Guid>
 
     private readonly List<ProductVariantOption> _options = new();
     public IReadOnlyCollection<ProductVariantOption> Options => _options.AsReadOnly();
+    public Product Product { get; private set; } = null!;
 
     private ProductVariant() { }
 
@@ -61,5 +62,17 @@ public class ProductVariant : EntityTrackingBase<Guid>
         {
             throw new DomainException(rule);
         }
+    }
+
+
+    public string GetVariantName()
+    {
+        List<string> names = _options.Select(o => o.OptionValue.Value).ToList();
+
+        if (names.Count == 0)
+        {
+            return "No variants found";
+        }
+        return string.Join(", ", names);
     }
 }

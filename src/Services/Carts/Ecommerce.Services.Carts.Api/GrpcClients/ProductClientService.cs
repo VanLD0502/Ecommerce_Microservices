@@ -1,0 +1,64 @@
+using BuildingBlocks.Grpc.Extensions;
+using BuildingBlocks.Grpc.Services;
+using BuildingBlocks.Shared.Commons;
+using BuildingBlocks.Shared.Enums;
+using BuildingBlocks.Shared.Extensions;
+using Ecommerce.Services.Carts.Api.Models.Dtos;
+using Ecommerce.Services.Carts.Api.Models.Entities;
+using Ecommerce.Services.Carts.Api.Models.Interfaces;
+using Grpc.Core;
+using MapsterMapper;
+
+namespace Ecommerce.Services.Carts.Api.GrpcClients;
+
+public class ProductClientService(ILogger<ProductClientService> logger, ProductGrpc.ProductGrpcClient grpcClient, IMapper mapper) : IProductService
+{
+    public async Task<Result<ProductDto>> GetProductVariantAsync(Guid variantId)
+    {
+        try
+        {
+            var variant = await grpcClient.GetVariantByIdAsync(new
+                    GetVariantByIdRequest()
+                    {
+                        Id = variantId.ToString()
+                    });
+            if (variant == null) 
+            {
+                return Result<ProductDto>.Failure("Product variant not found", EErrorCode.NotFound);
+            }
+            
+            var productDto = mapper.Map<ProductDto>(variant);
+            
+            return Result<ProductDto>.Success(productDto);
+        }
+        catch (RpcException e)
+        {
+            return e.ToResultFailure<ProductDto>();
+        }
+    }
+
+    public async Task<Result<List<ProductDto>>> GetProductVariantListAsync(List<string> variantIds)
+    {
+        try
+        {
+            var variants = await grpcClient.GetVariantsByIdsAsync(new
+                GetVariantsByIdsRequest()
+                {
+                    VariantIds = { variantIds }
+                });
+            
+            if (variants == null) 
+            {
+                return Result<List<ProductDto>>.Failure("Product variants not found", EErrorCode.NotFound);
+            }
+            
+            var productDtos = mapper.Map<List<ProductDto>>(variants.Variants);
+            
+            return Result<List<ProductDto>>.Success(productDtos);
+        }
+        catch (RpcException e)
+        {
+            return e.ToResultFailure<List<ProductDto>>();
+        }
+    }
+}

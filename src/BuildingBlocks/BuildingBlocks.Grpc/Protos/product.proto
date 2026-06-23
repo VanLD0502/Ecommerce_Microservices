@@ -5,50 +5,70 @@ option csharp_namespace = "BuildingBlocks.Grpc.Services";
 package product;
 
 service ProductGrpc {
-  rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
-  rpc ValidateProducts(ValidateProductsRequest) returns (ValidateProductsResponse);
+  rpc GetVariantById(GetVariantByIdRequest) returns (GetVariantByIdResponse);
+//  rpc ValidateProducts(ValidateProductsRequest) returns (ValidateProductsResponse);
+  rpc GetVariantsByIds(GetVariantsByIdsRequest) returns (GetVariantsByIdsResponse);
 }
 
-message  GetProductByIdRequest {
+
+//
+message  GetVariantByIdRequest {
   string id = 1;
 }
 
-message  GetProductByIdResponse {
-  string id = 1;
-  string name = 2;
-  string  price = 3;
+message  GetVariantByIdResponse {
+  string variantId = 1;
+  int32 availableStocks = 2;
 }
 
-//ValidateProducts
-message ValidateProductsRequest {
-  repeated ValidateProductItemDto items = 1; 
+//
+message GetVariantsByIdsRequest {
+  repeated string variantIds = 1;
+}
+message GetVariantsByIdsResponse {
+  repeated VariantGrpcDto Variants = 1;
 }
 
-message ValidateProductItemDto {
-  string id = 1;
-  string price = 2;
-  int32 quantity = 3;
+message VariantGrpcDto {
+  string variantId = 1;
+  string productId = 2;
+  string productName = 3;
+  string variantName = 4;
+  string unitPrice = 5;
+  int32 availableStocks = 6;
 }
 
-message ValidateProductsResponse {
-  bool isValid = 1;
-  repeated ProductValidatedItemDto items = 3;
-}
 
-message ProductValidatedItemDto {
-  string id = 1;
-  string price = 2;
-  int32  quantity = 3;
-  string name = 4;
-  ProductValidatedErrorStatus errorStatus = 5;
-}
-
-enum ProductValidatedErrorStatus {
-  None = 0;
-  NotFound = 1;
-  OutOfStock = 2;
-  PriceChanged = 3;
-}
+////ValidateProducts
+//message ValidateProductsRequest {
+//  repeated ValidateProductItemDto items = 1; 
+//}
+//
+//message ValidateProductItemDto {
+//  string id = 1;
+//  string price = 2;
+//  int32 quantity = 3;
+//}
+//
+//message ValidateProductsResponse {
+//  bool isValid = 1;
+//  repeated ProductValidatedItemDto items = 3;
+//}
+//
+//message ProductValidatedItemDto {
+//  string id = 1;
+//  string price = 2;
+//  int32  quantity = 3;
+//  string name = 4;
+//  ProductValidatedErrorStatus errorStatus = 5;
+//}
+//
+//enum ProductValidatedErrorStatus {
+//  None = 0;
+//  NotFound = 1;
+//  OutOfStock = 2;
+//  PriceChanged = 3;
+//}
 
 
 

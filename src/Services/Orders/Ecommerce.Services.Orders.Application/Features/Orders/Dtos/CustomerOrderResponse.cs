@@ -1,6 +1,4 @@
-using Ecommerce.Services.Orders.Domain;
-
-namespace Ecommerce.Services.Orders.Application.Commons.Dtos.Orders;
+namespace Ecommerce.Services.Orders.Application.Features.Orders.Dtos;
 
 public class CustomerOrderResponse
 {

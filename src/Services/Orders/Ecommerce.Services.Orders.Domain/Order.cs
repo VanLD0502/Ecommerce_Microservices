@@ -8,7 +8,7 @@ namespace Ecommerce.Services.Orders.Domain;
 public sealed class Order : AggregateRoot<Guid>, IDateTracking
 {   
     public long CustomerId { get; }
-    public OrderStatus Status { get; }
+    public OrderStatus Status { get;  }
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public DateTimeOffset CreatedDate { get; set; }
@@ -25,19 +25,26 @@ public sealed class Order : AggregateRoot<Guid>, IDateTracking
         TotalPrice = 0;
     }
 
-    public void AddItem(Guid productId, string productName, decimal unitPrice, int quantity)
+    public void AddItem(Guid vanriantId, string productName, string variantName, decimal unitPrice, int quantity)
     {
         Check(new OrderItemPriceMustBePositiveRule(unitPrice));
         Check(new OrderItemQuantityMustBePositiveRule(quantity));
+        
+        var existingItem = OrderItems.SingleOrDefault(item => item.VariantId == vanriantId);
 
+        if (existingItem != null)
+        {
+            throw new InvalidOperationException($"Variant with ID {vanriantId} is duplocated");
+        }
+        
         var item = new OrderItem
         {
-            Id = Guid.NewGuid(),
             OrderId = this.Id,
-            ProductId = productId,
             ProductName = productName,
             UnitPrice = unitPrice,
-            Quantity = quantity
+            Quantity = quantity,
+            VariantId = vanriantId,
+            VariantName = variantName
         };
 
         OrderItems.Add(item);

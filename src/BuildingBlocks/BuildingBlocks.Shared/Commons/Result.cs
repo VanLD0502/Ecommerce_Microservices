@@ -65,8 +65,8 @@ public class Result<T>
     public static Result<T> Success(T value, EErrorCode successCode = EErrorCode.Success) => 
         new() { IsSuccess = true, Value = value, ErrorCode = successCode };
     
-    public static Result<T> Failure(string? message, EErrorCode eError) => 
-        new() { IsSuccess = false, Message = message ?? eError.ToDefaultMessage(), ErrorCode = eError };
+    public static Result<T> Failure(string? message, EErrorCode eError, object? errors = null) => 
+        new() { IsSuccess = false, Message = message ?? eError.ToDefaultMessage(), ErrorCode = eError, Errors =  errors };
     
     // public static Result<T> Failure(string message, int statusCode) => 
     //     new() { IsSuccess = false, Message = message, ErrorCode = statusCode};

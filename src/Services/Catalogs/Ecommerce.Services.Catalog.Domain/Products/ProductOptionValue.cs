@@ -12,6 +12,8 @@ public class ProductOptionValue : EntityTrackingBase<Guid>
 
     private ProductOptionValue() { Value = null!; }
 
+    public ProductOption Option { get; private set; } = null!;
+
     public ProductOptionValue(Guid optionId, string value, int sortOrder)
     {
         Id = Guid.NewGuid();

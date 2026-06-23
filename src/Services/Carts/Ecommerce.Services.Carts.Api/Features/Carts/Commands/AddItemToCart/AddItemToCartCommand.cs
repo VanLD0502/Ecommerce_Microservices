@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Services.Carts.Api.Features.Carts.Commands.AddItemToCart;
 
-public record AddItemToCartCommand(int CustomerId, Guid ProductId, int Quantity) : ICommand<CartItem>;
+public record AddItemToCartCommand(int CustomerId, Guid ProductVariantId, int Quantity) : ICommand<CartItem>;
 
 public class AddItemToCartCommandHandler(
     ICacheService cacheService,
@@ -26,7 +26,7 @@ public class AddItemToCartCommandHandler(
             var key = CartCacheKey.GetCartCacheKey(request.CustomerId);
             var cart = await cacheService.GetAsync<Cart>(key, cancellationToken) ?? new Cart(request.CustomerId);
 
-            var itemResponse = cart.Items.FirstOrDefault(x => x.ProductId == request.ProductId);
+            var itemResponse = cart.Items.FirstOrDefault(x => x.ProductVariantId == request.ProductVariantId);
 
             if (itemResponse is not null)
             {
@@ -34,24 +34,25 @@ public class AddItemToCartCommandHandler(
             }
             else
             {
-                var productResult = await productService.GetProductAsync(request.ProductId);
+                logger.LogInformation("Đang thêm sản phẩm {ProductVariantId} vào giỏ hàng của khách hàng {CustomerId}", request.ProductVariantId, request.CustomerId);
+                var productResult = await productService.GetProductVariantAsync(request.ProductVariantId);
 
                 if (!productResult.IsSuccess)
                 {
                     return Result<CartItem>.Failure(productResult.Message ?? "Có lỗi xảy ra", productResult.ErrorCode);
                 }
+                
 
                 var product = productResult.Value!;
 
                 itemResponse = new CartItem
                 {
-                    ProductId = request.ProductId,
-                    ProductName = product.Name,
-                    UnitPrice = product.Price,
+                    ProductVariantId = request.ProductVariantId,
                     Quantity = request.Quantity
                 };
                 cart.Items.Add(itemResponse);
             }
+            
 
             await cacheService.SetAsync(key, cart, CartExpiry, cancellationToken);
 
