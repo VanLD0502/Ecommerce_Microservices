@@ -3,6 +3,7 @@ using Ecommerce.Services.Orders.Application.Features.Commands.CreateOrder;
 using Ecommerce.Services.Orders.Application.Features.Orders.Dtos;
 using Ecommerce.Services.Orders.Application.Features.Queries.GetCustomerOrders;
 using Microsoft.AspNetCore.Mvc;
+using BuildingBlocks.Auth;
 
 namespace Ecommerce.Services.Orders.Api.Controllers;
 
@@ -10,7 +11,7 @@ namespace Ecommerce.Services.Orders.Api.Controllers;
 /// Quản lý đơn hàng
 /// </summary>
 [Tags("Orders")]
-public class OrdersController : CleanV1CustomController
+public class OrdersController(ICurrentUserService currentUserService) : CleanV1CustomController
 {
     /// <summary>
     /// Lấy danh sách lịch sử mua hàng theo mã khách hàng (CustomerId)
@@ -25,7 +26,8 @@ public class OrdersController : CleanV1CustomController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetOrdersByCustomer(long customerId, CancellationToken cancellationToken)
     {
-        var result = await _sender.SendAsync(new GetCustomerOrdersQuery(customerId), cancellationToken);
+        var targetCustomerId = currentUserService.userId != 0 ? currentUserService.userId : customerId;
+        var result = await _sender.SendAsync(new GetCustomerOrdersQuery(targetCustomerId), cancellationToken);
 
         return result.IsSuccess 
             ? Ok(result) 
@@ -43,7 +45,8 @@ public class OrdersController : CleanV1CustomController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Checkout(int customerId, CancellationToken cancellationToken)
     {
-        var result = await _sender.SendAsync(new CreateOrderCommand(customerId), cancellationToken);
+        var targetCustomerId = currentUserService.userId != 0 ? (long)currentUserService.userId : customerId;
+        var result = await _sender.SendAsync(new CreateOrderCommand(targetCustomerId), cancellationToken);
 
         return result.IsSuccess 
             ? Ok(result) 

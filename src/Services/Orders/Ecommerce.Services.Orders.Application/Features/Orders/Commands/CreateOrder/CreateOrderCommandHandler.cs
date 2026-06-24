@@ -1,11 +1,10 @@
 using BuildingBlocks.Application.InMemoryBus;
-using BuildingBlocks.Grpc.Services;
+using BuildingBlocks.Auth;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
 using Ecommerce.Services.Orders.Application.Features.Orders.Dtos;
 using Ecommerce.Services.Orders.Application.Services;
-using Ecommerce.Services.Orders.Contracts.Events;
 using Ecommerce.Services.Orders.Domain;
 using MapsterMapper;
 using Microsoft.Extensions.Logging;
@@ -19,11 +18,12 @@ public class CreateOrderCommandHandler(
 {
     protected override async Task<Result<CustomerOrderResponse>> HandleCommandAsync(CreateOrderCommand command, CancellationToken cancellationToken)
     {
+        var customerId = command.CustomerId;
         try
         {
-            logger.LogInformation("Bắt đầu tạo đơn hàng (checkout) cho khách hàng: {CustomerId}", command.CustomerId);
+            logger.LogInformation("Bắt đầu tạo đơn hàng (checkout) cho khách hàng: {CustomerId}", customerId);
 
-            var cartResult = await cartService.GetCartByCustomerId(command.CustomerId);
+            var cartResult = await cartService.GetCartByCustomerId(customerId);
 
             if (!cartResult.IsSuccess)
             {
@@ -52,7 +52,7 @@ public class CreateOrderCommandHandler(
             }
             
             // 3. Tạo Order mới
-            var order = new Order(command.CustomerId);
+            var order = new Order(customerId);
 
             foreach (var cartItem in cartResponse.Items)
             {
@@ -71,7 +71,7 @@ public class CreateOrderCommandHandler(
             // {
             //     Id = order.Id,
             //     CreatedAt = DateTime.UtcNow,
-            //     CustomerId = command.CustomerId
+            //     CustomerId = customerId
             // };
 
             // await publishEndpoint.Publish(orderCreatedEvent, cancellationToken);
@@ -83,7 +83,7 @@ public class CreateOrderCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Có lỗi xảy ra trong quá trình tạo đơn hàng cho khách hàng: {CustomerId}", command.CustomerId);
+            logger.LogError(ex, "Có lỗi xảy ra trong quá trình tạo đơn hàng cho khách hàng: {CustomerId}", customerId);
             return Result<CustomerOrderResponse>.Failure("Có lỗi xảy ra trong quá trình xử lý đơn hàng", EErrorCode.InternalServerError);
         }
     }

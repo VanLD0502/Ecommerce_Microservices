@@ -16,4 +16,6 @@ services:
     container_name: ecommerce_rabbitmq
     image: rabbitmq:3-management
 
-  
+  identity_db:
+    container_name: ecommerce_identity_db
+    image: postgres:16-alpine

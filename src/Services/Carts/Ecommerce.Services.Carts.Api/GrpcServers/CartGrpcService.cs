@@ -1,3 +1,4 @@
+using BuildingBlocks.Auth;
 using BuildingBlocks.Grpc.Services;
 using BuildingBlocks.Shared.Extensions;
 using Ecommerce.Services.Carts.Api.Features.Carts.Queries.GetCart;

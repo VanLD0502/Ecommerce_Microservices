@@ -1,3 +1,4 @@
+using BuildingBlocks.Auth;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Caching;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Services.Carts.Api.Features.Carts.Commands.AddItemToCart;
 
-public record AddItemToCartCommand(int CustomerId, Guid ProductVariantId, int Quantity) : ICommand<CartItem>;
+public record AddItemToCartCommand(long CustomerId, Guid ProductVariantId, int Quantity) : ICommand<CartItem>;
 
 public class AddItemToCartCommandHandler(
     ICacheService cacheService,
@@ -21,10 +22,11 @@ public class AddItemToCartCommandHandler(
 
     public async Task<Result<CartItem>> Handle(AddItemToCartCommand request, CancellationToken cancellationToken)
     {
+        long customerId = request.CustomerId;
         try
         {
-            var key = CartCacheKey.GetCartCacheKey(request.CustomerId);
-            var cart = await cacheService.GetAsync<Cart>(key, cancellationToken) ?? new Cart(request.CustomerId);
+            var key = CartCacheKey.GetCartCacheKey(customerId);
+            var cart = await cacheService.GetAsync<Cart>(key, cancellationToken) ?? new Cart(customerId);
 
             var itemResponse = cart.Items.FirstOrDefault(x => x.ProductVariantId == request.ProductVariantId);
 
@@ -34,7 +36,7 @@ public class AddItemToCartCommandHandler(
             }
             else
             {
-                logger.LogInformation("Đang thêm sản phẩm {ProductVariantId} vào giỏ hàng của khách hàng {CustomerId}", request.ProductVariantId, request.CustomerId);
+                logger.LogInformation("Đang thêm sản phẩm {ProductVariantId} vào giỏ hàng của khách hàng {CustomerId}", request.ProductVariantId, customerId);
                 var productResult = await productService.GetProductVariantAsync(request.ProductVariantId);
 
                 if (!productResult.IsSuccess)
@@ -60,7 +62,7 @@ public class AddItemToCartCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Lỗi khi thêm sản phẩm vào giỏ hàng của khách hàng {CustomerId}: {Message}", request.CustomerId, ex.Message);
+            logger.LogError(ex, "Lỗi khi thêm sản phẩm vào giỏ hàng của khách hàng {CustomerId}: {Message}", customerId, ex.Message);
             return Result<CartItem>.Failure(ex.Message, EErrorCode.InternalServerError);
         }
     }

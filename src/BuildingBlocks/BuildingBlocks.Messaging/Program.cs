@@ -1,7 +1,7 @@
 // using MassTransit;
 // using MassTransit.Api;
 // using MassTransit.Api.Settings;
-// using Microsoft.AspNetCore.Identity.UI.Services;
+// using Microsoft.AspNetCore.Identity.Api.UI.Services;
 // using Microsoft.Extensions.Options;
 // using Microsoft.VisualBasic;
 //

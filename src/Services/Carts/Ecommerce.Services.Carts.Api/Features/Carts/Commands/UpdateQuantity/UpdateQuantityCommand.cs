@@ -1,3 +1,4 @@
+using BuildingBlocks.Auth;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Caching;
@@ -8,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Services.Carts.Api.Features.Carts.Commands.UpdateQuantity;
 
-public record UpdateQuantityCommand(int CustomerId, Guid ProductId, int Quantity) : ICommand;
+public record UpdateQuantityCommand(long CustomerId, Guid ProductId, int Quantity) : ICommand;
 
 public class UpdateQuantityCommandHandler(
     ICacheService cacheService,
@@ -19,9 +20,10 @@ public class UpdateQuantityCommandHandler(
 
     public async Task<Result> Handle(UpdateQuantityCommand request, CancellationToken cancellationToken)
     {
+        var customerId = request.CustomerId;
         try
         {
-            var key = CartCacheKey.GetCartCacheKey(request.CustomerId);
+            var key = CartCacheKey.GetCartCacheKey(customerId);
             var cart = await cacheService.GetAsync<Cart>(key, cancellationToken);
 
             if (cart is null)
@@ -49,7 +51,7 @@ public class UpdateQuantityCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Lỗi khi cập nhật số lượng sản phẩm trong giỏ của khách hàng {CustomerId}: {Message}", request.CustomerId, ex.Message);
+            logger.LogError(ex, "Lỗi khi cập nhật số lượng sản phẩm trong giỏ của khách hàng {CustomerId}: {Message}", customerId, ex.Message);
             return Result.Failure(ex.Message, EErrorCode.InternalServerError);
         }
     }

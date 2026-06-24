@@ -1,4 +1,5 @@
 using BuildingBlocks.Application;
+using BuildingBlocks.Auth;
 using BuildingBlocks.Caching;
 using BuildingBlocks.Grpc.Services;
 using BuildingBlocks.Logging;
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 //MyDI
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IProductService, ProductClientService>();
+builder.Services.AddHttpContextAccessor();
 
 //BuildingBlocks
 builder.AddCustomSerilog("Cart Api");
@@ -35,6 +37,7 @@ builder.Services.AddGrpc();
 
 builder.Services.AddBuildingBlocksApplication(typeof(Program).Assembly);
 
+builder.Services.AddBuildingBlocsAuth(builder.Configuration);
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -42,6 +45,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.AddMappingEndpoints();
 

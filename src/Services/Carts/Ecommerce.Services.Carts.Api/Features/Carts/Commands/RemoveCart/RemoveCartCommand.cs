@@ -1,3 +1,4 @@
+using BuildingBlocks.Auth;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Caching;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Services.Carts.Api.Features.Carts.Commands.RemoveCart;
 
-public record RemoveCartCommand(int CustomerId) : ICommand;
+public record RemoveCartCommand(long CustomerId) : ICommand;
 
 public class RemoveCartCommandHandler(
     ICacheService cacheService,
@@ -16,17 +17,18 @@ public class RemoveCartCommandHandler(
 {
     public async Task<Result> Handle(RemoveCartCommand request, CancellationToken cancellationToken)
     {
+        var customerId = request.CustomerId;
         try
         {
             await cacheService.RemoveAsync(
-                CartCacheKey.GetCartCacheKey(request.CustomerId),
+                CartCacheKey.GetCartCacheKey(customerId),
                 cancellationToken);
 
             return Result.Success();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Lỗi khi xóa giỏ hàng của khách hàng {CustomerId}: {Message}", request.CustomerId, ex.Message);
+            logger.LogError(ex, "Lỗi khi xóa giỏ hàng của khách hàng {CustomerId}: {Message}", customerId, ex.Message);
             return Result.Failure(ex.Message, EErrorCode.InternalServerError);
         }
     }

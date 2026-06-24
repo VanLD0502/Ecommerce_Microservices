@@ -1,4 +1,5 @@
 using BuildingBlocks.Application.InMemoryBus;
+using BuildingBlocks.Auth;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.InfrastructureInterfaces.InMemoryBus;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
@@ -19,13 +20,14 @@ public class GetCustomerOrdersQueryHandler(
 {
     protected override async Task<Result<List<CustomerOrderResponse>>> HandleQueryAsync(GetCustomerOrdersQuery query, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Getting orders for customer: {CustomerId}", query.CustomerId);
+        var customerId = query.CustomerId;
+        logger.LogInformation("Getting orders for customer: {CustomerId}", customerId);
 
         var orderRepo = unitOfWork.Repository<Order, Guid>();
 
         // Fetch orders using repository method, without calling AsQueryable()
         var orders = await orderRepo.GetAllAsync(
-            predicate: o => o.CustomerId == query.CustomerId,
+            predicate: o => o.CustomerId == customerId,
             orderBy: q => q.OrderByDescending(o => o.CreatedDate),
             cancellationToken: cancellationToken,
             includes: o => o.OrderItems
@@ -35,5 +37,4 @@ public class GetCustomerOrdersQueryHandler(
 
         return Result<List<CustomerOrderResponse>>.Success(response);
     }
-    
 }

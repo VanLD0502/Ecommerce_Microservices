@@ -1,3 +1,4 @@
+using BuildingBlocks.Auth;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Caching;
@@ -19,18 +20,19 @@ public class GetCartQueryHandler(
 {
     public async Task<Result<CartResponse>> Handle(GetCartQuery request, CancellationToken cancellationToken)
     {
+        long customerId = request.CustomerId;
         try
         {
             var cart = await cacheService.GetAsync<Cart>(
-                CartCacheKey.GetCartCacheKey(request.CustomerId), 
+                CartCacheKey.GetCartCacheKey(customerId), 
                 cancellationToken);
 
             
             if (cart == null)
             {
-                cart = new Cart(request.CustomerId);
+                cart = new Cart(customerId);
                 await cacheService.SetAsync(
-                    CartCacheKey.GetCartCacheKey(request.CustomerId),
+                    CartCacheKey.GetCartCacheKey(customerId),
                     cart,
                     TimeSpan.FromDays(7),
                     cancellationToken);
@@ -40,7 +42,7 @@ public class GetCartQueryHandler(
             {
                 return Result<CartResponse>.Success(new CartResponse()
                 {
-                    CustomerId = request.CustomerId,
+                    CustomerId = customerId,
                     Items = []
                 });
             }
@@ -56,7 +58,7 @@ public class GetCartQueryHandler(
             
             var cartResponse = new CartResponse()
             {
-                CustomerId = request.CustomerId,
+                CustomerId = customerId,
             };
 
             cartResponse.Items = mapper.Map<List<CartItemResponse>>(cart.Items);
@@ -71,7 +73,7 @@ public class GetCartQueryHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Lỗi khi lấy giỏ hàng của khách hàng {CustomerId}: {Message}", request.CustomerId, ex.Message);
+            logger.LogError(ex, "Lỗi khi lấy giỏ hàng của khách hàng {CustomerId}: {Message}", customerId, ex.Message);
             return Result<CartResponse>.Failure(ex.Message, EErrorCode.InternalServerError);
         }
     }
