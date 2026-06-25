@@ -10,9 +10,9 @@ using Duende.IdentityServer;
 namespace Ecommerce.Services.Identity.Api.Controllers;
 
 [ApiController]
-[Route("api/account")]
+[Route("api/auth")]
 [Authorize(AuthenticationSchemes = IdentityServerConstants.LocalApi.AuthenticationScheme)]
-public class AccountController(
+public class AuthController(
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole<long>> roleManager,
     Ecommerce.Services.Identity.Api.Persistances.AppDbContext dbContext) : ControllerBase
@@ -37,7 +37,6 @@ public class AccountController(
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            AvatarUrl = request.AvatarUrl,
             EmailConfirmed = true // Bỏ qua bước xác thực email cho đơn giản
         };
 
@@ -113,8 +112,7 @@ public class AccountController(
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-
-        // Solve N+1 query for user roles
+        
         var userIds = users.Select(u => u.Id).ToList();
         var userRoles = await dbContext.UserRoles
             .Where(ur => userIds.Contains(ur.UserId))

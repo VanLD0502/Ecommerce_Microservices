@@ -66,7 +66,8 @@ public static class IdentityServerConfig
                 
                 // Token sống 1 giờ → sau 1 giờ phải đăng nhập lại hoặc dùng Refresh Token
                 AccessTokenLifetime = 3600,
-                
+                AbsoluteRefreshTokenLifetime = 7 * 3600 * 24,
+                RefreshTokenUsage = TokenUsage.OneTimeOnly, // rotate token
                 AllowOfflineAccess = true, // Cho phép cấp Refresh Token
             }
         };

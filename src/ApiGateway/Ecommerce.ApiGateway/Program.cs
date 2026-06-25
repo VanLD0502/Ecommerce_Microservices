@@ -1,10 +1,12 @@
 using System.Net;
 using System.Threading.RateLimiting;
+using Ecommerce.ApiGateway.Consts;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
+builder.Services.AddControllers();
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -53,6 +55,12 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHttpClient(HttpClientConstansts.IdentityClientName, client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5027");
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -66,5 +74,8 @@ app.UseHttpsRedirection();
 app.UseCors("MyPolicy");
 
 app.UseRateLimiter();
+app.MapControllers();
 app.MapReverseProxy();
+
+
 app.Run();
