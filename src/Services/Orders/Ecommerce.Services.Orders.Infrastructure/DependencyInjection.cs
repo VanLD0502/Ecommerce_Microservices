@@ -18,8 +18,14 @@ public static class DependencyInjection
         services.AddDbContext<OrderDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        services.AddMasstransitEventBus(configuration);
-        
+        services.AddMasstransitEventBus(configuration, config =>
+        {
+            config.AddEntityFrameworkOutbox<OrderDbContext>(o =>
+            {
+                o.UsePostgres();
+                o.UseBusOutbox();
+            });
+        });
         
         services.AddScoped<IEfUnitOfWork, EfUnitOfWork<OrderDbContext>>();
         

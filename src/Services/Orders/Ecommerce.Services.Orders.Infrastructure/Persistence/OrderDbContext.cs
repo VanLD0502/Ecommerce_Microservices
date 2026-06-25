@@ -2,6 +2,8 @@ using BuildingBlocks.EfCore.Persistence.Commons;
 using BuildingBlocks.Shared.InfrastructureInterfaces.InMemoryBus;
 using Ecommerce.Services.Orders.Domain;
 using Microsoft.EntityFrameworkCore;
+using MassTransit;
+
 
 namespace Ecommerce.Services.Orders.Infrastructure.Persistence;
 
@@ -13,7 +15,11 @@ public class OrderDbContext(DbContextOptions<OrderDbContext> options, IInMemoryB
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
+        
+        modelBuilder.AddOutboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+        modelBuilder.AddInboxStateEntity();
+        
         modelBuilder.Entity<Order>(entity =>
         {
             entity.HasKey(o => o.Id);

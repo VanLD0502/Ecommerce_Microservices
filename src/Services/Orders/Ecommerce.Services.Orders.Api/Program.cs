@@ -1,3 +1,4 @@
+using BuildingBlocks.Auth;
 using BuildingBlocks.Logging;
 using BuildingBlocks.EfCore;
 using BuildingBlocks.Messaging;
@@ -20,11 +21,12 @@ builder.AddCustomSerilog("Order Services");
 // OpenAPI
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
-
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddBuildingBlocksInfrastructure(builder.Configuration);
 builder.Services.AddBuildingBlocksWeb();
+builder.Services.AddBuildingBlocsAuth(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 // gRPC Clients

@@ -11,10 +11,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Configurations\" />
       <Folder Include="Cors\" />
       <Folder Include="Extensions\" />
       <Folder Include="MinimalApi\" />
-      <Folder Include="ScalarApi\" />
     </ItemGroup>
 
     <ItemGroup>

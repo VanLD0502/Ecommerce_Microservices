@@ -1,5 +1,7 @@
 using System.Reflection;
+using BuildingBlocks.Messaging.Core;
 using BuildingBlocks.Messaging.Settings;
+using BuildingBlocks.Shared.InfrastructureInterfaces.Messaging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +21,6 @@ public static class DependencyInjection
             x.AddConsumers(callingAssembly);
             configure?.Invoke(x);
             x.UsingRabbitMq((context, cfg) =>
-
             {
                 
                 var settings = context
@@ -47,5 +48,6 @@ public static class DependencyInjection
             });
         });
 
+        services.AddScoped<IEventPublisher, EventPublisher>();
     }
 }

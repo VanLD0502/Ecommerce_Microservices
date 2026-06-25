@@ -1,10 +1,11 @@
 using BuildingBlocks.Application.InMemoryBus;
-using BuildingBlocks.Auth;
 using BuildingBlocks.Shared.Commons;
 using BuildingBlocks.Shared.Enums;
+using BuildingBlocks.Shared.InfrastructureInterfaces.Messaging;
 using BuildingBlocks.Shared.InfrastructureInterfaces.Persistence.EFCore;
 using Ecommerce.Services.Orders.Application.Features.Orders.Dtos;
 using Ecommerce.Services.Orders.Application.Services;
+using Ecommerce.Services.Orders.Contracts.Events;
 using Ecommerce.Services.Orders.Domain;
 using MapsterMapper;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ namespace Ecommerce.Services.Orders.Application.Features.Commands.CreateOrder;
 public class CreateOrderCommandHandler(
     ICartService cartService,
     IEfUnitOfWork unitOfWork,
+    IEventPublisher publisher,
     ILogger<CreateOrderCommandHandler> logger, IMapper mapper)
     : CommandHandler<CreateOrderCommand, CustomerOrderResponse>
 {
@@ -38,6 +40,7 @@ public class CreateOrderCommandHandler(
             }
 
             var errors = new List<string>();
+            
             foreach (var cartItem in cartResponse.Items)
             {
                 if (cartItem.AvailableStocks < cartItem.Quantity)
@@ -62,17 +65,22 @@ public class CreateOrderCommandHandler(
             // 4. Lưu đơn hàng vào Database
             var orderRepo = unitOfWork.Repository<Order, Guid>();
             orderRepo.Add(order);
+            
+            var orderCreatedEvent = new OrderCreatedEvent
+            {
+                Id = order.Id,
+                CreatedAt = DateTime.UtcNow,
+                CustomerId = customerId
+            };
+            await publisher.PublishAsync(orderCreatedEvent, cancellationToken);
+            
+            
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogInformation("Tạo đơn hàng thành công: {OrderId}", order.Id);
-
-            // // 5. Phát sự kiện để xóa giỏ hàng
-            // var orderCreatedEvent = new OrderCreatedEvent
-            // {
-            //     Id = order.Id,
-            //     CreatedAt = DateTime.UtcNow,
-            //     CustomerId = customerId
-            // };
+            
+            
+            
 
             // await publishEndpoint.Publish(orderCreatedEvent, cancellationToken);
             logger.LogInformation("Đã phát sự kiện OrderCreatedEvent cho đơn hàng: {OrderId}", order.Id);

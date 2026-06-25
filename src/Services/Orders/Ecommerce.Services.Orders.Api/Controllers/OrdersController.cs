@@ -13,6 +13,8 @@ namespace Ecommerce.Services.Orders.Api.Controllers;
 [Tags("Orders")]
 public class OrdersController(ICurrentUserService currentUserService) : CleanV1CustomController
 {
+    public long UserId => currentUserService.userId;
+    
     /// <summary>
     /// Lấy danh sách lịch sử mua hàng theo mã khách hàng (CustomerId)
     /// </summary>
@@ -40,13 +42,12 @@ public class OrdersController(ICurrentUserService currentUserService) : CleanV1C
     /// <param name="customerId">Mã khách hàng</param>
     /// <param name="cancellationToken">Token hủy yêu cầu</param>
     /// <returns>Mã đơn hàng vừa tạo</returns>
-    [HttpPost("checkout/{customerId:int}")]
+    [HttpPost("checkout")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Checkout(int customerId, CancellationToken cancellationToken)
     {
-        var targetCustomerId = currentUserService.userId != 0 ? (long)currentUserService.userId : customerId;
-        var result = await _sender.SendAsync(new CreateOrderCommand(targetCustomerId), cancellationToken);
+        var result = await _sender.SendAsync(new CreateOrderCommand(UserId), cancellationToken);
 
         return result.IsSuccess 
             ? Ok(result) 

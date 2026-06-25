@@ -19,8 +19,4 @@
       <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="IntegrationBus\" />
-    </ItemGroup>
-
 </Project>
